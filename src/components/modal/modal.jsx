@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./modal.css";
 
-export default function Modal({ isEdit, editData, setIsEdit }) {
+export default function Modal({ isEdit, editData, setIsEdit, fetchArmaturs }) {
     const [modal, setModal] = useState(false);
     const [formData, setFormData] = useState({
         date: '',
@@ -74,7 +74,7 @@ export default function Modal({ isEdit, editData, setIsEdit }) {
             .then((res) => {
                 console.log(res.data);
                 toggleModal();
-                window.location.reload();
+                fetchArmaturs(); // fetch data after submit
             })
             .catch((err) => {
                 console.log(err);

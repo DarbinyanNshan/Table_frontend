@@ -4,7 +4,7 @@ import Modal from "../../components/modal/modal";
 import axios from "axios";
 
 export default function Armatur() {
-    const [armaturs, setArmaturs] = useState([]);
+    const [table, setTables] = useState([]);
     const [isEdit, setIsEdit] = useState(false);
     const [editData, setEditData] = useState(null);
 
@@ -15,7 +15,7 @@ export default function Armatur() {
     const fetchArmaturs = () => {
         axios.get(`http://localhost:3001/armatur`)
             .then((res) => {
-                setArmaturs(res.data);
+                setTables(res.data);
             })
             .catch((err) => {
                 console.error("Error fetching data:", err);
@@ -39,7 +39,7 @@ export default function Armatur() {
     ];
 
     const calculateSum = (key) => {
-        return armaturs.reduce((sum, record) => {
+        return table.reduce((sum, record) => {
             return sum + (parseFloat(record[key]) || 0);
         }, 0);
     };
@@ -62,12 +62,12 @@ export default function Armatur() {
         axios.put(`http://localhost:3001/armatur/delet/${id}`,
             {
                 id: id,
-            },)
+            })
             .then(() => {
-                const deletedV = armaturs.find(d => d._id === id)
-                const newArmaturs = armaturs.filter(d => d !== deletedV)
-                setArmaturs([
-                    ...newArmaturs
+                const deletedV = table.find(d => d._id === id)
+                const newTables = table.filter(d => d !== deletedV)
+                setTables([
+                    ...newTables
                 ])
             })
             .catch((err) => {
@@ -91,7 +91,7 @@ export default function Armatur() {
                     </tr>
                 </thead>
                 <tbody>
-                    {armaturs.map((record, rowIndex) => (
+                    {table.map((record, rowIndex) => (
                         <tr key={rowIndex}>
                             {columns.map((column, colIndex) => (
                                 column.key === "actions" ? (
