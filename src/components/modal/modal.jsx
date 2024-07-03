@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./modal.css";
 
-export default function Modal() {
+export default function Modal({ isEdit, editData, setIsEdit }) {
     const [modal, setModal] = useState(false);
     const [formData, setFormData] = useState({
         date: '',
@@ -19,8 +19,32 @@ export default function Modal() {
         f32: ''
     });
 
+    useEffect(() => {
+        if (isEdit && editData) {
+            setFormData(editData);
+            setModal(true);
+        }
+    }, [isEdit, editData]);
+
     const toggleModal = () => {
         setModal(!modal);
+        if (modal) {
+            setIsEdit(false);
+            setFormData({
+                date: '',
+                f8a1: '',
+                f8a3: '',
+                f12: '',
+                f14: '',
+                f16: '',
+                f18: '',
+                f20: '',
+                f22: '',
+                f25: '',
+                f28: '',
+                f32: ''
+            });
+        }
     };
 
     if (modal) {
@@ -39,14 +63,22 @@ export default function Modal() {
 
     const onSubmit = (e) => {
         e.preventDefault();
-        console.log(formData);
-        axios.post('http://localhost:3001/armatur/add', formData)
-          .then((res) => {
+        const apiCall = isEdit
+            ? axios.put(`http://localhost:3001/armatur/edite/${formData._id}`,
+                formData,
+                {
+                    id: formData._id,
+                })
+            : axios.post('http://localhost:3001/armatur/add', formData);
+        apiCall
+            .then((res) => {
                 console.log(res.data);
-          })
-          .catch((err) => {
+                toggleModal();
+                window.location.reload();
+            })
+            .catch((err) => {
                 console.log(err);
-          });
+            });
     };
 
     return (
@@ -96,7 +128,7 @@ export default function Modal() {
                                 <input
                                     type="number"
                                     name="f16"
-                                    value={formData.f15}
+                                    value={formData.f16}
                                     onChange={handleChange}
                                     placeholder="Ф-16"
                                 />
@@ -142,10 +174,8 @@ export default function Modal() {
                                     onChange={handleChange}
                                     placeholder="Ф-32"
                                 />
-                                <button 
-                                type="submit"
-                                >
-                                    Create an Account
+                                <button type="submit">
+                                    {isEdit ? "Update" : "Create"} Record
                                 </button>
                             </form>
                             <button className="close-modal" onClick={toggleModal}>
